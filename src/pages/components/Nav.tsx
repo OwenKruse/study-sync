@@ -48,6 +48,7 @@ function ResponsiveAppBar() {
     }
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
     const router = useRouter();
     const handleLogin = () => {
         handleCloseLogin();
@@ -61,10 +62,33 @@ function ResponsiveAppBar() {
                 password,
             }),
         })
-            .then((response) => response.json())
+            // Check if the response is 401 Unauthorized and alert the user and skip the rest of the code
+            .then((response) => {
+                if (response.status === 401) {
+                    alert('Invalid email or password. Please try again.')
+                    setError(true);
+                }
+                return response;
+            })
+            .then((response) => response.json()
             .then((data) => (localStorage.setItem('token', data.token)))
-            .then(() => setIsLogin(true))
-            .catch((error) => console.log(error));
+            .then(() => {if (localStorage.getItem('token') && !error)  {
+                setIsLogin(true);
+            } else {
+                setIsLogin(false);
+                localStorage.removeItem('token');
+                router.reload();
+            }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setIsLogin(false);
+                alert('Invalid email or password. Please try again.')
+            }));
+
+
+
         // Refresh the page if the user logs in or out
     };
 

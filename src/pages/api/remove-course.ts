@@ -29,6 +29,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Replace the user's courses with the new courses
         await users.findOneAndUpdate({ email }, { $set: { courses: filteredCourses } });
 
+        // Find all the notes for the course
+        const notes = user.notes || [];
+        const filteredNotes = notes.filter((n: any) => n.course !== course);
+
+        // Replace the user's notes with the new notes
+
+
+        await users.findOneAndUpdate(
+            { email },
+            { $set: { notes: filteredNotes } }
+        )
+
 
 
         await client.close();

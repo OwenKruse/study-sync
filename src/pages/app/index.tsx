@@ -19,15 +19,17 @@ import {
     Tooltip,
     Divider,
     List,
-    ListItem, ListItemText, SelectChangeEvent,
+    ListItem, ListItemText, SelectChangeEvent, Modal,
+
 
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import React, {useEffect, useState} from 'react'
 import { useRouter } from 'next/router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
-
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 export default function Dashboard() {
 
 
@@ -120,16 +122,26 @@ export default function Dashboard() {
         };
 
 
-
     // Include the onClick event handler
-    const handleRemoveCourse = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleRemoveCourse = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, course) => {
         // If there is only one course, don't allow the user to remove it
-
         // Change the button text to "Confirm"
         if (firstClick) {
             setFirstClick(false);
-            event.currentTarget.innerText = 'Confirm';
-            setCurrentButtonVariant('outlined');
+            setDeleteColors({
+                ...deleteColors,
+                [course]: 'error',
+            });
+            //Timer to change the button text back to "Remove"
+            setTimeout(() => {
+                setFirstClick(true);
+                setDeleteColors({
+                    ...deleteColors,
+                    [course]: 'inherit',
+                });
+            }
+                , 3000);
+
             return;
         }
 
@@ -154,10 +166,7 @@ export default function Dashboard() {
                 .catch((error) => console.log(error));
 
             setFirstClick(true);
-            event.currentTarget.innerText = 'Remove Course';
             setCourseName('');
-            setCurrentButtonVariant('contained');
-            // Refresh the page
     }
 
 
@@ -167,7 +176,7 @@ export default function Dashboard() {
         setDisabled(false);
     }
 
-    const handleNewNote = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleNewNote = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, course) => {
         const token = localStorage.getItem('token');
         fetch('/api/new-note', {
             method: 'POST',
@@ -198,10 +207,63 @@ export default function Dashboard() {
             }
 
 
+    const [open, setOpen] = React.useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const [editMode, setEditMode] = useState(false);
+    const [deleteColors, setDeleteColors] = useState({});
+    const [deleteFirstClick, setDeleteFirstClick] = useState(true);
+
+    function handleDelete(id: any): void {
+        if (deleteFirstClick) {
+            setDeleteColors({
+                ...deleteColors,
+                [id]: 'error',
+            });
+            setDeleteFirstClick(false);
+
+                setTimeout(() => {
+                                setDeleteColors({
+                                    ...deleteColors,
+                                    [id]: 'inherit',
+                                });
+                                setDeleteFirstClick(true);
+                            }
+                , 3000);
+            return;
+        }
 
 
-    // @ts-ignore
-    // @ts-ignore
+            const token = localStorage.getItem('token');
+        fetch('/api/delete-note', {
+            method: 'POST',
+            // @ts-ignore
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+            body: JSON.stringify({ id }),
+            credentials: 'include',
+        })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .then(() => {
+                setShouldUpdate(!shouldUpdate);
+            })
+            .catch((error) => console.log(error));
+
+        setDeleteFirstClick(true);
+
+    }
+
+
+
     return (
         <div style={
             {
@@ -226,77 +288,64 @@ export default function Dashboard() {
                 {isLoggedIn &&
                 <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2} >
-                        <Grid item xs={12} sm={6} md={4} lg={3} >
-                            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', }}>
-                                <List>
-                                    <ListItem>
-                                        <FormControl sx={{ minWidth: "100%" }}>
-                                            <InputLabel color={
-                                                "secondary"
+                        <Grid item xs={12} sm={6} md={8} lg={12}>
+                            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', width: '100%' }}>
+                                <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" sx={
+                                    {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
 
-                                            } id="demo-simple-select-label">Course</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={courseName}
-                                                onChange={e => handleCourseChange(e)}
-                                                label="Course"
-                                                key={course}
-                                                color={'secondary'}
-                                                // Stop the menu from highlighting the selected item on keyboard navigation
-                                            >
+                                    }
+                                }>
+                                    <Paper sx={{  display: 'flex', flexDirection: 'column', justifySelf:'center', alignSelf:'center', maxWidth:'500px', maxHeight:'500px', overflow:'auto', backgroundColor: '#383838' }}>
+                                        <List>
+                                            <ListItem>
+                                                <TextField id="outlined-basic" color={'secondary'}
+                                                           onKeyDown={(e) => e.stopPropagation()}
+                                                           label='Add A Course'
+                                                           value={name}
+                                                           variant="outlined"
+                                                           onChange={(e) => setName(e.target.value)}
+                                                           sx={
+                                                               {
+                                                                   width: '100%',
+                                                                   marginRight: '10px'
+                                                               }
+                                                           } />
 
-                                                {courses.length > 0 && courses.map((course, index) => (
-                                                    <MenuItem key={`${course}-${index}`} value={course}>{course}</MenuItem>
-                                                ))}
-                                                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '10px' }}>
-                                                    <TextField id="outlined-basic" color={'secondary'}
-                                                               onKeyDown={(e) => e.stopPropagation()}
-                                                               label='Add A Course'
-                                                               value={name}
-                                                               variant="outlined"
-                                                               onChange={(e) => setName(e.target.value)}
-                                                               sx={
-                                                        {
-                                                            width: '100%',
-                                                            marginRight: '10px'
-                                                        }
-                                                    } />
-                                                    <Button variant="contained"
-                                                            onClick={handleAdd}
-                                                            color="primary" >
-                                                        <AddIcon />
-                                                    </Button>
-                                                </Box>
-                                            </Select>
-                                        </FormControl>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Button variant="contained" onClick={e => handleNewNote(e)
-                                        } color="primary" sx={{ width: '100%' }}>
-                                            New Note
-                                        </Button>
-                                    </ListItem>
-                                    <ListItem key={course}>
-                                        <Button
-                                                variant={currentButtonVariant}
-                                                disabled={course === ''}
-                                                onClick={e => handleRemoveCourse(e)}
-                                                color="error"
-                                                sx={{ width: '100%'
-                                        }}>
-                                            Remove Course
-                                        </Button>
-                                    </ListItem>
+                                                <Button variant="contained"
+                                                        // Handle add and close
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleClose();
+                                                            handleAdd();
+                                                        }}
+                                                        color="secondary" >
+                                                    <AddIcon />
+                                                </Button>
+                                            </ListItem>
 
-                                </List>
+                                        </List>
 
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={8} lg={9}>
-                            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                <Typography variant="h6" component="h2" gutterBottom>
+                                    </Paper>
+
+                                </Modal>
+                                <Typography variant="h6" component="h2" gutterBottom sx={
+                                    {
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }
+                                }>
                                     Notes
+                                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Button variant="outlined" onClick={e => handleClickOpen(e)
+                                        } color="secondary" sx={{  }}>
+                                            <CreateNewFolderIcon/>
+                                        </Button>
+                                    </Box>
                                 </Typography>
                                 <Divider />
                                 <Grid container spacing={2} sx={{
@@ -319,10 +368,30 @@ export default function Dashboard() {
                                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column',
                                                     backgroundColor: '#2f2e2e'
                                                 }}>
-                                                    <Typography variant="h6" component="h2" gutterBottom>
-                                                        {course}
-                                                    </Typography>
+                                                    <Typography variant="h6" component="h2" gutterBottom sx={
+                                                        {
+                                                            display: 'flex',
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between',
+                                                        }
+                                                    }>
+                                                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                                            {course}
+                                                            <DeleteIcon
+                                                                color={deleteColors[course] ? deleteColors[course] : 'inherit'}
+                                                                sx={{ marginLeft: '10px',
+                                                                    cursor: 'pointer',
 
+                                                                }}
+                                                                onClick={(e) => handleRemoveCourse(e, course)}
+                                                            />
+                                                        </Box>
+
+                                                        <Button variant="outlined" onClick={e => handleNewNote(e, course) } color="secondary" sx={{  }}>
+                                                            <AddIcon/>
+                                                        </Button>
+                                                    </Typography>
                                                 <List>
                                                     {notes.length > 0 && notes.filter((note) => note.course === course).map((note, index) => (
                                                         <ListItem key={`${note}-${index}`} sx={
@@ -332,8 +401,10 @@ export default function Dashboard() {
                                                                 flexDirection: 'row',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'space-between',
+
                                                             }
                                                         }>
+
                                                             <Tooltip title={note.content.length < 100 ? note.content : note.content.slice(0, 100) + '...'} placement="top">
                                                             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%',
                                                                 alignItems: 'flex-start',
@@ -342,14 +413,37 @@ export default function Dashboard() {
                                                                 backgroundColor: '#2f2e2e',
                                                                 padding: '1rem',
                                                                 borderRadius: '10px',
+                                                                ":hover": {
+                                                                    transform: 'scale(1.01)',
+                                                                }
 
-                                                            }} onClick={event => handleNoteClick(event, note.id, course)}>
-                                                                <Typography variant="h6" component="h2" gutterBottom>
+                                                            }}
+                                                                 onClick={event => handleNoteClick(event, note.id, course)}>
+                                                                <Typography variant="h6" component="h2" gutterBottom sx={
+                                                                    {
+                                                                        display: 'flex',
+                                                                        flexDirection: 'row',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'space-between',
+                                                                        width: '100%',
+                                                                    }
+                                                                }>
                                                                     {note.title}
+
+                                                                    <DeleteIcon
+                                                                        key={note.id}
+                                                                        sx={{ width: '25px' }}
+                                                                        color={deleteColors[note.id] || 'default'}
+                                                                        onClick={event => {
+                                                                            event.stopPropagation();
+                                                                            handleDelete(note.id);
+                                                                        }}
+                                                                    />
                                                                 </Typography>
                                                                 <Typography variant="body2" component="p" gutterBottom>
                                                                    # {note.id}
                                                                 </Typography>
+
                                                                 <Divider />
 
                                                             </Box>

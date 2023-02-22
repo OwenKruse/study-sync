@@ -14,6 +14,7 @@ export default async function createCourse(req: { headers: { authorization: any;
         // Verify the JWT and get the email
         // @ts-ignore
         const { email } = jwt.verify(token, 'key');
+        console.log(email)
 
         // Connect to the MongoDB database
         const client = await MongoClient.connect('mongodb+srv://owenoakenheels:4Frozen95@users.cuzqvke.mongodb.net/?retryWrites=true&w=majority');
@@ -21,6 +22,20 @@ export default async function createCourse(req: { headers: { authorization: any;
 
         const users = client.db('myapp').collection('users');
         const { name } = req.body;
+
+        // Check if the course already exists
+        const user = await users.findOne({ email });
+
+        // @ts-ignore
+        const courses = user.courses || [];
+
+        // @ts-ignore
+        // Loop through the courses and check if the course already exists
+        const courseExists = courses.some((course) => course.name === name);
+
+        if (courseExists) {
+            return res.status(400).json({ message: 'Course already exists' });
+        }
         const result = await users.findOneAndUpdate(
             { email },
             { $push: { courses: name } }
