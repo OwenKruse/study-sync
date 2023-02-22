@@ -52,6 +52,7 @@ export default function Dashboard() {
         }
     fetch('/api/get-courses', {
         method: 'GET',
+        // @ts-ignore
         headers: {
             'Content-Type': 'application/json',
             Authorization: token,
@@ -103,6 +104,7 @@ export default function Dashboard() {
                 .then(() => {
                     fetch('/api/get-courses', {
                         method: 'GET',
+                        // @ts-ignore
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: token,
@@ -123,7 +125,7 @@ export default function Dashboard() {
 
 
     // Include the onClick event handler
-    const handleRemoveCourse = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, course) => {
+    const handleRemoveCourse = (event: React.MouseEvent<SVGSVGElement>, course: never) => {
         // If there is only one course, don't allow the user to remove it
         // Change the button text to "Confirm"
         if (firstClick) {
@@ -176,7 +178,7 @@ export default function Dashboard() {
         setDisabled(false);
     }
 
-    const handleNewNote = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, course) => {
+    const handleNewNote = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, course: never) => {
         const token = localStorage.getItem('token');
         fetch('/api/new-note', {
             method: 'POST',
@@ -264,6 +266,7 @@ export default function Dashboard() {
 
 
 
+    // @ts-ignore
     return (
         <div style={
             {
@@ -341,7 +344,7 @@ export default function Dashboard() {
                                 }>
                                     Notes
                                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Button variant="outlined" onClick={e => handleClickOpen(e)
+                                        <Button variant="outlined" onClick={() => handleClickOpen()
                                         } color="secondary" sx={{  }}>
                                             <CreateNewFolderIcon/>
                                         </Button>
