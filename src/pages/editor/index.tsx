@@ -1,35 +1,55 @@
-import { RichTextEditor, Link } from '@mantine/tiptap';
-import { useEditor } from '@tiptap/react';
+import {Link, RichTextEditor} from '@mantine/tiptap';
+import { ReactNodeViewRenderer, useEditor} from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
-import {MouseEvent, useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/router';
-import Nav from '../components/Nav';
 import {MantineProvider} from '@mantine/core';
-import {Button} from "@mui/material";
+import {Box, Button, List, ListItem, Typography} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+import {mergeAttributes, Node} from '@tiptap/core'
+import TranscriptionComponent from "../components/Exstension";
 
 // @ts-ignore
 export default function Editor({ id, notes}) {
+
     // Sourt the notes and find the one with the same id as the one in the url
     const note = notes.notes.sort((a: { id: number; }, b: { id: number; }) => a.id - b.id).find((note: { id: number; }) => note.id === parseInt(id));
-    const content = note.content;
-
+   const content = note.content;
+    const [dropText, setDropText] = useState('');
     const editor = useEditor({
         extensions: [
             StarterKit,
             Underline,
             Link,
             Superscript,
+            TranscriptionComponent,
             SubScript,
             Highlight,
             TextAlign.configure({types: ['heading', 'paragraph']}),
         ],
+        editorProps: {
+            handleDOMEvents: {
+                drop: (view, event) => { event.preventDefault();
+                    // @ts-ignore
+                    const text = event.dataTransfer.getData('text/plain');
+                    event.preventDefault();
+                    // Get Drop position
+                    const x = event.pageX
+                    const y = event.pageY
+                    // Get the position in the editor
+                    const pos = view.posAtCoords({left: x, top: y})
+                    // Insert the transcription Component
+                    // @ts-ignore
+                    view.dispatch(view.state.tr.insert(pos.pos, view.state.schema.nodes.reactComponent.create({text})));
+
+                    },
+            },
+            },
         content,
     });
     const [text, setText] = useState(content);
@@ -40,6 +60,7 @@ export default function Editor({ id, notes}) {
         });
     }
 
+    const [transcriptions, setTranscriptions] = useState(['Hi This is a transcription', "This is another transcription", "This is a much longer transcription to show how the editor handles longer transcriptions."]);
     useEffect(() => {
             const timer = setTimeout(() => {
                 if (text !== content) {
@@ -84,11 +105,9 @@ export default function Editor({ id, notes}) {
             .then((res) => res.json())
             .then((data) => {
                 console.log(data.data);
-                let text = '';
                 for (let i = 0; i < data.data.output.segments.length; i++) {
-                    text += data.data.output.segments[i].text + ' ';
+                    setTranscriptions((prev) => [...prev, data.data.output.segments[i].text]);
                 }
-                editor?.chain().focus().insertContent(text).run();
             });
     }
 
@@ -121,6 +140,7 @@ export default function Editor({ id, notes}) {
             setTranscribeStyle('contained');
             setTranscribeButtonText('Recording');
             setRecording(true);
+            getAudio();
         }
         else if (!firstTranscribeClick) {
             setTranscribeStyle('outlined');
@@ -162,9 +182,8 @@ export default function Editor({ id, notes}) {
                             setTimeout(function () {
                                 // @ts-ignore
                                 mediaRecorder.stop();
-                                console.log(recording)
 
-                            }, 5000);
+                            }, 30000);
                         })
                         .catch(function (err) {
                             console.log('The following error occurred: ' + err);
@@ -179,18 +198,38 @@ export default function Editor({ id, notes}) {
         if (recording) {
             interval = setInterval(() => {
                 getAudio();
-            }, 5000);
+            }, 30000);
         }
 
         return () => clearInterval(interval);
     }, [recording]);
 
+    const listRef = useRef<HTMLUListElement>(null);
 
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.scrollTop = listRef.current.scrollHeight;
+        }
+    }, [transcriptions]);
+    
     // @ts-ignore
     return (
-            <div>
+            <div style={
+                {
+                    display: 'flex',
+                    flexDirection: 'row',
+
+                }
+            }>
                 <MantineProvider theme={{ colorScheme: 'dark' }}>
-                <RichTextEditor editor={editor}>
+                <RichTextEditor editor={editor}
+
+
+                                sx={
+                    {
+                        width: '100%',
+                    }
+                }>
                 <RichTextEditor.Toolbar   sx={
                     {
                         position: 'fixed',
@@ -255,7 +294,12 @@ export default function Editor({ id, notes}) {
 
                     </RichTextEditor.Toolbar>
 
-                    <RichTextEditor.Content sx={
+                    <RichTextEditor.Content
+                        onDrop={event => {
+                            event.preventDefault();
+                        }}
+
+                        sx={
                         {
                             paddingTop: '4rem',
                             minHeight: '100vh',
@@ -265,6 +309,68 @@ export default function Editor({ id, notes}) {
 
 
                 </RichTextEditor>
+                    <Box>
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'flex-start',
+                            minHeight: '100vh',
+                            width: '20vw',
+                            backgroundColor: '#383838',
+
+                        }}>
+                            <List sx={
+                                {
+                                    paddingTop: '5rem',
+                                    width: '100%',
+                                    overflow: 'auto',
+                                    maxHeight: '100vh',
+
+                                }
+                            }
+                                    ref={listRef}
+                            >
+
+
+                                {transcriptions.map((transcription, index) => {
+                                    return (
+                                        <ListItem key={index} sx={
+                                            {
+                                                width: '100%',
+                                            }
+                                        }>
+                                            <Box
+                                                draggable={true}
+                                                onDragStart={(e) => {
+                                                    e.dataTransfer.setData('text/plain', transcription);
+                                                }}
+                                                sx={
+                                                {
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    backgroundColor: '#262626',
+                                                    padding: '.75rem',
+                                                    borderRadius: '10px',
+                                                    width: '100%',
+                                                    cursor: 'pointer',
+                                                }
+                                            }>
+                                                <Typography sx={
+                                                    {
+                                                        fontSize: '.85rem',
+                                                        fontWeight: '500',
+                                                        color: '#e1e1e1',
+                                                    }
+                                                }>{transcription}</Typography>
+                                            </Box>
+                                        </ListItem>
+                                    )
+                                })}
+                            </List>
+                        </Box>
+                    </Box>
                 </MantineProvider>
             </div>
 );

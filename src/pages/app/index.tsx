@@ -284,7 +284,7 @@ export default function Dashboard() {
                 {!isLoggedIn &&
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                    Please login to and refresh the page to view your dashboard
+                    Please login and refresh the page to view your dashboard
                     </Typography>
                     </Box>
                     }
