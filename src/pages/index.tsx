@@ -323,7 +323,7 @@ export default function Home() {
 
                                     }
                                     }>
-                                    <Image src={'/../public/Screen Shot 2023-02-24 at 14.16.40.png'} alt={'StudySync'} fill={true}/>
+                                    <Image src={'/Screen Shot 2023-02-24 at 14.16.40.png'} alt={'StudySync'} fill={true}/>
                                     </Container>
                                 </Grid>
                                 <Grid item xs={7} sx={{
@@ -351,7 +351,7 @@ export default function Home() {
                                         boxShadow: 3,
                                     }
                                     }>
-                                    <Image src={'/../public/E970257C-2486-46E6-BE0A-1434A2AEF575.jpeg'} alt={'Computer'} fill={true}/>
+                                    <Image src={'/E970257C-2486-46E6-BE0A-1434A2AEF575.jpeg'} alt={'Computer'} fill={true}/>
                                     </Container>
                                 </Grid>
                             </Grid>
