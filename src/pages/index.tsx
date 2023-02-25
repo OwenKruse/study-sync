@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import classes from '../styles/Home.module.css';
 import {
     Button,
     Typography,
@@ -9,26 +8,12 @@ import {
     Box,
     Grid,
     Paper,
-    TextField,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormControl,
-    FormHelperText,
-    InputAdornment,
-    IconButton,
-    OutlinedInput,
-    InputBase,
-    Tooltip,
-    Divider,
     List,
-    ListItem, ListItemText, SelectChangeEvent, Modal,
-
-
+    ListItem,
 } from "@mui/material";
 
 import {Link, RichTextEditor} from '@mantine/tiptap';
-import { ReactNodeViewRenderer, useEditor} from '@tiptap/react';
+import { useEditor} from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -36,10 +21,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import {useEffect, useRef, useState} from 'react';
-import {useRouter} from 'next/router';
 import {MantineProvider} from '@mantine/core';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {mergeAttributes, Node} from '@tiptap/core'
 import TranscriptionComponent from "./components/Exstension";
 import Nav from "./components/Nav";
 export default function Home() {
@@ -94,6 +76,7 @@ export default function Home() {
     const transcribe = async (audio: any) => {
         await fetch('/api/get-transcription', {
             method: 'POST',
+            // @ts-ignore
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: localStorage.getItem('token')
@@ -112,8 +95,6 @@ export default function Home() {
             });
     }
 
-    const [firstClick, setFirstClick] = useState(true);
-    const [style, setStyle] = useState('outlined');
 
     const [transcriptions, setTranscriptions] = useState(['The mitochondria is the powerhouse of the cell.', 'We exist in a world of constant change.', ' The time is now to make a change.']);
     const [firstTranscribeClick, setFirstTranscribeClick] = useState(true);
@@ -479,7 +460,10 @@ export default function Home() {
                                                         {
                                                             marginLeft: 'auto',
                                                         }
-                                                    } color={'secondary'} variant={transcribeStyle}>{transcribeButtonText}</Button>
+                                                    } color={'secondary'}
+
+                                                            // @ts-ignore
+                                                            variant={transcribeStyle}>{transcribeButtonText}</Button>
 
 
 

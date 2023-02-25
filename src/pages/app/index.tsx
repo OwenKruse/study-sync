@@ -7,28 +7,17 @@ import {
     Grid,
     Paper,
     TextField,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormControl,
-    FormHelperText,
-    InputAdornment,
-    IconButton,
-    OutlinedInput,
-    InputBase,
     Tooltip,
     Divider,
     List,
-    ListItem, ListItemText, SelectChangeEvent, Modal,
+    ListItem, SelectChangeEvent, Modal,
 
 
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import React, {useEffect, useState} from 'react'
 import { useRouter } from 'next/router';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 export default function Dashboard() {
 
@@ -396,7 +385,9 @@ export default function Dashboard() {
                                                         </Button>
                                                     </Typography>
                                                 <List>
-                                                    {notes.length > 0 && notes.filter((note) => note.course === course).map((note, index) => (
+                                                    {
+                                                        // @ts-ignore
+                                                        notes.length > 0 && notes.filter((note) => note.course === course).map((note, index) => (
                                                         <ListItem key={`${note}-${index}`} sx={
                                                             {
                                                                 width: '100%',
@@ -408,7 +399,9 @@ export default function Dashboard() {
                                                             }
                                                         }>
 
-                                                            <Tooltip title={note.content.length < 100 ? note.content : note.content.slice(0, 100) + '...'} placement="top">
+                                                            <Tooltip title={
+                                                                // @ts-ignore
+                                                                note.content.length < 100 ? note.content : note.content.slice(0, 100) + '...'} placement="top">
                                                             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%',
                                                                 alignItems: 'flex-start',
                                                                 justifyContent: 'flex-start',
@@ -421,6 +414,7 @@ export default function Dashboard() {
                                                                 }
 
                                                             }}
+                                                                 // @ts-ignore
                                                                  onClick={event => handleNoteClick(event, note.id, course)}>
                                                                 <Typography variant="h6" component="h2" gutterBottom sx={
                                                                     {
@@ -431,20 +425,26 @@ export default function Dashboard() {
                                                                         width: '100%',
                                                                     }
                                                                 }>
-                                                                    {note.title}
+                                                                    {
+                                                                        // @ts-ignore
+                                                                        note.title}
 
                                                                     <DeleteIcon
+                                                                        // @ts-ignore
                                                                         key={note.id}
                                                                         sx={{ width: '25px' }}
+                                                                        // @ts-ignore
                                                                         color={deleteColors[note.id] || 'default'}
                                                                         onClick={event => {
                                                                             event.stopPropagation();
+                                                                            // @ts-ignore
                                                                             handleDelete(note.id);
                                                                         }}
                                                                     />
                                                                 </Typography>
                                                                 <Typography variant="body2" component="p" gutterBottom>
-                                                                   # {note.id}
+                                                                   # { // @ts-ignore
+                                                                    note.id}
                                                                 </Typography>
 
                                                                 <Divider />

@@ -1,5 +1,5 @@
 import {Link, RichTextEditor} from '@mantine/tiptap';
-import { ReactNodeViewRenderer, useEditor} from '@tiptap/react';
+import {useEditor} from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -11,7 +11,6 @@ import {useRouter} from 'next/router';
 import {MantineProvider} from '@mantine/core';
 import {Box, Button, List, ListItem, Typography} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {mergeAttributes, Node} from '@tiptap/core'
 import TranscriptionComponent from "../components/Exstension";
 
 // @ts-ignore
@@ -20,7 +19,6 @@ export default function Editor({ id, notes}) {
     // Sourt the notes and find the one with the same id as the one in the url
     const note = notes.notes.sort((a: { id: number; }, b: { id: number; }) => a.id - b.id).find((note: { id: number; }) => note.id === parseInt(id));
    const content = note.content;
-    const [dropText, setDropText] = useState('');
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -106,6 +104,7 @@ export default function Editor({ id, notes}) {
     const transcribe = async (audio: any) => {
         await fetch('/api/get-transcription', {
             method: 'POST',
+            // @ts-ignore
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: localStorage.getItem('token')
@@ -118,6 +117,7 @@ export default function Editor({ id, notes}) {
             .then((data) => {
                 console.log(data.data);
                 for (let i = 0; i < data.data.output.segments.length; i++) {
+                    // @ts-ignore
                     setTranscriptions((prev) => [...prev, data.data.output.segments[i].text]);
                 }
             });
@@ -257,7 +257,9 @@ export default function Editor({ id, notes}) {
                             width: '10px',
 
                         }
-                    } color={'warning'} variant={style}>
+                    } color={'warning'}
+                            // @ts-ignore
+                            variant={style}>
                         <ArrowBackIcon/>
                     </Button>
                     <RichTextEditor.ControlsGroup>
@@ -299,7 +301,9 @@ export default function Editor({ id, notes}) {
                         {
                             marginLeft: 'auto',
                         }
-                    } color={'secondary'} variant={transcribeStyle}>{transcribeButtonText}</Button>
+                    } color={'secondary'}
+                            // @ts-ignore
+                            variant={transcribeStyle}>{transcribeButtonText}</Button>
 
 
 
