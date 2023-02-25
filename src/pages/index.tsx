@@ -22,7 +22,7 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import {useEffect, useRef, useState} from 'react';
 import {MantineProvider} from '@mantine/core';
-import TranscriptionComponent from "./components/Exstension";
+import TranscriptionComponent from "./api/Exstension";
 import Nav from "./components/Nav";
 export default function Home() {
     const content = '<p>Start typing here...</p>';

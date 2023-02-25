@@ -11,7 +11,7 @@ import {useRouter} from 'next/router';
 import {MantineProvider} from '@mantine/core';
 import {Box, Button, List, ListItem, Typography} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import TranscriptionComponent from "../components/Exstension";
+import TranscriptionComponent from "../api/Exstension";
 
 // @ts-ignore
 export default function Editor({ id, notes}) {
