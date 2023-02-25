@@ -4,7 +4,9 @@ import {Typography, Card} from "@mui/material";
 import classes from "../../styles/Transcription.module.css";
 export default function Transcription(Text: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined) {
         // Make sure text is a string
+    // @ts-ignore
     if (Text?.node?.attrs.text) {
+        // @ts-ignore
         Text = Text.node.attrs.text
     }
     else {
