@@ -14,11 +14,34 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TranscriptionComponent from "../api/Exstension";
 
 // @ts-ignore
-export default function Editor({ id, notes}) {
-
-    // Sourt the notes and find the one with the same id as the one in the url
-    const note = notes.notes.sort((a: { id: number; }, b: { id: number; }) => a.id - b.id).find((note: { id: number; }) => note.id === parseInt(id));
-   const content = note.content;
+export default function Editor({ id, course, token}) {
+    const [content, setContent] = useState('');
+    const [note, setNote] = useState([]);
+    useEffect(() => {
+      fetch(`/api/get-notes`, {
+        method: 'POST',
+        // @ts-ignore
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+        },
+        body: JSON.stringify({ course }),
+        credentials: 'include',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            return data;
+        })
+        .then((data) => {
+            setNote(data.notes.sort((a: { id: number; }, b: { id: number; }) => a.id - b.id).find((note: { id: number; }) => note.id === parseInt(id)))
+            // @ts-ignore
+            setContent(note.content);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+      // @ts-ignore
+    },[course, id, note.content, token] );
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -50,6 +73,12 @@ export default function Editor({ id, notes}) {
             },
         content,
     });
+
+    useEffect(() => {
+        if (editor) {
+            editor.commands.setContent(content);
+        }
+    }, [content, editor]);
     const [text, setText] = useState(content);
     // Every time the editor changes and then doesnt change for 30 seconds, update the content
     if (editor) {
@@ -61,17 +90,20 @@ export default function Editor({ id, notes}) {
     const [transcriptions, setTranscriptions] = useState([]);
 
     useEffect(() => {
+        // @ts-ignore
         if (note.transcription) {
+            // @ts-ignore
             setTranscriptions(note.transcription)
         }
     }
+    // @ts-ignore
     , [note.transcription]);
 
 
         useEffect(() => {
             const timer = setTimeout(() => {
                 if (text !== content) {
-                    fetch('http://localhost:3000/api/edit-note', {
+                    fetch('/api/edit-note', {
                         method: 'POST',
                         // @ts-ignore
 
@@ -115,7 +147,6 @@ export default function Editor({ id, notes}) {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data.data);
                 for (let i = 0; i < data.data.output.segments.length; i++) {
                     // @ts-ignore
                     setTranscriptions((prev) => [...prev, data.data.output.segments[i].text]);
@@ -394,30 +425,15 @@ export default function Editor({ id, notes}) {
 
 export async function getServerSideProps(context: { query: { course: any; id: any; token: any; }; }) {
     const { course, id, token } = context.query;
-    console.log(course, id, token)
 
 
-    const notes = await fetch(`https://study-sync.vercel.app/api/notes/${id}`, {
-        method: 'POST',
-        // @ts-ignore
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-        },
-        body: JSON.stringify({ course }),
-        credentials: 'include',
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            return data;
-        });
 
-    console.log(notes)
+
     return {
         props: {
             course: course,
             id: id,
-            notes: notes,
+            token: token,
         },
 
     };
