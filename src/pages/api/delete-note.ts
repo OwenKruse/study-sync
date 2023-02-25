@@ -24,11 +24,13 @@ export default async function deleteNote(req: NextApiRequest, res: NextApiRespon
     const user = await users.findOne({ email });
     // @ts-ignore
     let noteToEdit;
-    let notes = user.notes;
+    // @ts-ignore
+        let notes = user.notes;
     // @ts-ignore
     for (let i = 0; i < user.notes.length; i++) {
         // @ts-ignore
         if (user.notes[i].id == id) {
+            // @ts-ignore
             noteToEdit = user.notes[i];
             notes.splice(i, 1);
         }

@@ -60,12 +60,23 @@ export default function Editor({ id, notes}) {
         });
     }
 
-    const [transcriptions, setTranscriptions] = useState(['Hi This is a transcription', "This is another transcription", "This is a much longer transcription to show how the editor handles longer transcriptions."]);
+    const [transcriptions, setTranscriptions] = useState([]);
+
     useEffect(() => {
+        if (note.transcription) {
+            setTranscriptions(note.transcription)
+        }
+    }
+    , [note.transcription]);
+
+
+        useEffect(() => {
             const timer = setTimeout(() => {
                 if (text !== content) {
                     fetch('http://localhost:3000/api/edit-note', {
                         method: 'POST',
+                        // @ts-ignore
+
                         headers: {
                             'Content-Type': 'application/json',
                             Authorization: localStorage.getItem('token')
@@ -73,6 +84,7 @@ export default function Editor({ id, notes}) {
                         body: JSON.stringify({
                             id,
                             content: text,
+                            transcription: transcriptions,
                         }),
                     });
                 }
@@ -183,7 +195,7 @@ export default function Editor({ id, notes}) {
                                 // @ts-ignore
                                 mediaRecorder.stop();
 
-                            }, 30000);
+                            }, 15000);
                         })
                         .catch(function (err) {
                             console.log('The following error occurred: ' + err);
@@ -198,7 +210,7 @@ export default function Editor({ id, notes}) {
         if (recording) {
             interval = setInterval(() => {
                 getAudio();
-            }, 30000);
+            }, 15000);
         }
 
         return () => clearInterval(interval);

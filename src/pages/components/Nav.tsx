@@ -17,7 +17,6 @@ import {useEffect, useState} from "react";
 import {router} from "next/client";
 import {useRouter} from "next/router";
 
-const pages = ['Dashboard'];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -74,6 +73,7 @@ function ResponsiveAppBar() {
             .then((data) => (localStorage.setItem('token', data.token)))
             .then(() => {if (localStorage.getItem('token') && !error)  {
                 setIsLogin(true);
+                router.push('/app');
             } else {
                 setIsLogin(false);
                 localStorage.removeItem('token');
@@ -104,6 +104,7 @@ function ResponsiveAppBar() {
         handleCloseUserMenu();
         localStorage.removeItem('token');
         setIsLogin(false);
+        router.push('/');
     }
 
 
@@ -158,11 +159,9 @@ function ResponsiveAppBar() {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                <MenuItem  onClick={() => router.push('/app')}>
+                                    <Typography textAlign="center">Dashboard</Typography>
                                 </MenuItem>
-                            ))}
                         </Menu>
                     </Box>
                     <Typography
@@ -184,15 +183,12 @@ function ResponsiveAppBar() {
                         StudySync
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
                             <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => router.push('/app')}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                {page}
+                                <Typography textAlign="center">Dashboard</Typography>
                             </Button>
-                        ))}
                     </Box>
 
                         {!isLogin && (
@@ -283,8 +279,6 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            <MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
-                            <MenuItem onClick={handleCloseUserMenu}>My account</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </Box>

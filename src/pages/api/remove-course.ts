@@ -30,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await users.findOneAndUpdate({ email }, { $set: { courses: filteredCourses } });
 
         // Find all the notes for the course
+        // @ts-ignore
         const notes = user.notes || [];
         const filteredNotes = notes.filter((n: any) => n.course !== course);
 

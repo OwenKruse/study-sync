@@ -8,6 +8,7 @@ export default async function newNote(req: NextApiRequest, res: NextApiResponse)
         const content = req.body.content;
         const token = req.headers.authorization || req.cookies.token;
         const {id} = req.body;
+        const {transcription} = req.body;
         if (!token) {
             return res.status(401).json({ message: 'You must be logged in to access this resource.' });
         }
@@ -23,17 +24,20 @@ export default async function newNote(req: NextApiRequest, res: NextApiResponse)
         const user = await users.findOne({ email });
 
         let noteToEdit;
+        // @ts-ignore
         let notes = user.notes;
         // @ts-ignore
         for (let i = 0; i < user.notes.length; i++) {
             // @ts-ignore
             if (user.notes[i].id == id) {
+                // @ts-ignore
                 noteToEdit = user.notes[i];
                 notes[i] = {
                     title: noteToEdit.title,
                     content: content,
+                    transcription: transcription,
                     course: noteToEdit.course,
-                    id: noteToEdit.id
+                    id: noteToEdit.id,
                 }
             }
         }

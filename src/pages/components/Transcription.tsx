@@ -1,36 +1,38 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { NodeViewWrapper } from '@tiptap/react'
 import {
     Container,
     Button,
     Modal,
-    Card,
 
 } from "@mantine/core";
-import {Typography} from "@mui/material";
+import {Typography, Card} from "@mui/material";
+import classes from "../../styles/Transcription.module.css";
 export default function Transcription(Text: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined) {
         // Make sure text is a string
         // @ts-ignore
          Text = Text.node.attrs.text
 
-
+        const [thisWidth, setThisWidth] = React.useState(true);
         const [open, setOpen] = React.useState(false);
-        const ref = React.useRef(null);
 
 
 
-        return (
+    return (
             <NodeViewWrapper className={"react-component"}>
                     <Card contentEditable={false}
-                            onClick={() => setOpen(!open)}
                             onMouseEnter={() => setOpen(true)}
                             onMouseLeave={() => setOpen(false)}
+                          className={classes.width}
                           sx={
                         {
-                            // If the max-centent with is larger than 15 rem then set the width to max-content
-                            maxWidth: open ? 'max-content' : '15rem',
+                            width: 'max-content',
                             overflow: 'hidden',
                             cursor: 'pointer',
+                            paddingTop: '0.5rem',
+                            paddingLeft: '0.5rem',
+                            paddingRight: '0.5rem',
+                            backgroundColor: '#262626',
                         }
                     } >
                         <Typography
