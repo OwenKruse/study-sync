@@ -397,7 +397,7 @@ export async function getServerSideProps(context: { query: { course: any; id: an
     console.log(course, id, token)
 
 
-    const notes = await fetch('http://localhost:3000/api/get-notes', {
+    const notes = await fetch(`https://study-sync.vercel.app/api/notes/${id}`, {
         method: 'POST',
         // @ts-ignore
         headers: {
