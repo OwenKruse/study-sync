@@ -24,8 +24,11 @@ import {useEffect, useRef, useState} from 'react';
 import {MantineProvider} from '@mantine/core';
 import TranscriptionComponent from "./api/Exstension";
 import Nav from "./components/Nav";
+import { useMediaQuery} from "@mui/material";
+
 export default function Home() {
     const content = '<p>Start typing here...</p>';
+    const isMobile = useMediaQuery('(max-width:600px)');
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -200,6 +203,7 @@ export default function Home() {
                                     // underline the text with 00ADB5
                                     textDecoration: 'underline',
                                     textDecorationColor: '#00ADB5',
+                                    // Center the text
                                 }
                                 }>
                                     StudySync
@@ -208,6 +212,9 @@ export default function Home() {
                                     color: '#ffffff',
                                     fontWeight: 'bold',
                                     paddingTop: '1rem',
+                                    textAlign: 'center',
+                                    justifyContent: 'center',
+
                                 }
                                 }>
                                     The note taking app for the modern student
@@ -282,6 +289,7 @@ export default function Home() {
                                 paddingTop: '5rem',
                                 // underline the text with 00ADB5
                                 paddingBottom: '2rem',
+                                paddingLeft: isMobile ? '1rem' : 0,
                             }
                             }>
                                 Your notes, wherever you are.
@@ -297,7 +305,7 @@ export default function Home() {
                                 width: '100%',
                             }
                             }>
-                                <Grid item xs={2} sx={{
+                                <Grid item xs={isMobile ? 12 : 4} sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
                                     // Center the content vertically and horizontally
@@ -321,21 +329,22 @@ export default function Home() {
                                         border: '1px solid #00ADB5',
                                         overflow: 'hidden',
 
+
                                     }
                                     }>
                                     <Image src={'/Screen Shot 2023-02-24 at 14.16.40.png'} alt={'StudySync'} fill={true}/>
                                     </Container>
                                 </Grid>
-                                <Grid item xs={7} sx={{
+                                <Grid item xs={isMobile ? 0 : 7} sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
                                     // Center the content vertically and horizontally
                                     justifyContent: 'center',
                                     alignItems: 'center',
 
+
                                 }}>
                                     <Container sx={{
-                                        display: 'flex',
                                         flexDirection: 'column',
                                         // Center the content vertically and horizontally
                                         justifyContent: 'center',
@@ -349,6 +358,7 @@ export default function Home() {
                                         borderRadius: '1rem',
                                         // Give the container a shadow
                                         boxShadow: 3,
+                                        display: isMobile ? 'none' : 'flex',
                                     }
                                     }>
                                     <Image src={'/E970257C-2486-46E6-BE0A-1434A2AEF575.jpeg'} alt={'Computer'} fill={true}/>
@@ -374,6 +384,8 @@ export default function Home() {
                                     paddingTop: '2rem',
                                     // underline the text with 00ADB5
                                     paddingBottom: '2rem',
+                                    paddingLeft: isMobile ? '1rem' : 0,
+
                                 }
                                 }>
                                     Be sure your getting everything from your meetings, lectures, and presentations.

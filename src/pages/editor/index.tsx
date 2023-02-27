@@ -12,9 +12,11 @@ import {MantineProvider} from '@mantine/core';
 import {Box, Button, List, ListItem, Typography} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TranscriptionComponent from "../api/Exstension";
+import { useMediaQuery } from "@mui/material";
 
 // @ts-ignore
 export default function Editor({ id, course, token}) {
+    const isMobile = useMediaQuery('(max-width:600px)');
     const [content, setContent] = useState('');
     const [note, setNote] = useState([]);
     useEffect(() => {
@@ -368,7 +370,7 @@ export default function Editor({ id, course, token}) {
                         }}>
                             <List sx={
                                 {
-                                    paddingTop: '5rem',
+                                    paddingTop: isMobile ? '10rem' : '5rem',
                                     width: '100%',
                                     overflow: 'auto',
                                     maxHeight: '100vh',
