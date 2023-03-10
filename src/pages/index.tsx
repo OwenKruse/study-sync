@@ -1,30 +1,19 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import {
-    Button,
-    Typography,
-    Container,
-    Box,
-    Grid,
-    Paper,
-    List,
-    ListItem,
-} from "@mui/material";
+import {Box, Button, Container, Grid, List, ListItem, Paper, Typography, useMediaQuery,} from "@mui/material";
 
 import {Link, RichTextEditor} from '@mantine/tiptap';
-import { useEditor} from '@tiptap/react';
+import {useEditor} from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
-import {useEffect, useRef, useState} from 'react';
 import {MantineProvider} from '@mantine/core';
 import TranscriptionComponent from "./api/Exstension";
 import Nav from "./components/Nav";
-import { useMediaQuery} from "@mui/material";
 
 export default function Home() {
     const content = '<p>Start typing here...</p>';
@@ -587,7 +576,7 @@ export default function Home() {
                                             paddingBottom: '15rem',
                                         }
                                     }>
-                                        Drag and drop the import things right into your notes.
+                                        Drag and drop the important things right into your notes.
                                     </Typography>
                                 </Grid>
                             </Grid>
