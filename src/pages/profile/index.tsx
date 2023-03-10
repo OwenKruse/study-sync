@@ -1,10 +1,15 @@
-import {JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, SetStateAction,
+import {
+    JSXElementConstructor,
+    Key,
+    ReactElement,
+    ReactFragment,
+    ReactPortal,
+    SetStateAction,
     useEffect,
     useState
 } from 'react';
 import {useRouter} from 'next/router';
 import Nav from '../components/Nav'
-import bcrypt from 'bcrypt';
 
 import {
     Bat,
@@ -32,25 +37,7 @@ import {
     Rabbit,
     Whale,
 } from '@icon-park/react';
-import {
-    Button,
-    Typography,
-    Container,
-    Box,
-    Grid,
-    Paper,
-    TextField,
-    Tooltip,
-    Divider,
-    List,
-    ListItem, SelectChangeEvent, Modal, Icon, IconButton, SvgIcon
-
-
-} from "@mui/material";
-
-import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import {Slider} from "@mantine/core";
+import {Box, Button, Container, Divider, Grid, List, ListItem, Paper, TextField, Typography} from "@mui/material";
 
 export default function Profile() {
     const router = useRouter();
@@ -197,9 +184,7 @@ export default function Profile() {
         '#9400D3',
     ];
 
-    const gradient = `linear-gradient(to right, ${rainbow.join(', ')})`;
 
-    const value = rainbow[Math.round((color / 100) * (rainbow.length - 1))];
     // @ts-ignore
     // @ts-ignore
     return (
@@ -243,11 +228,13 @@ export default function Profile() {
                                             // Loop through the users notes and check if the notes course is equal to the course name and if so, add it to the list
                                             // @ts-ignore
                                             profile?.notes.map((note: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined, index: Key | null | undefined) => {
+                                                // @ts-ignore
                                                 if (note.course === course) {
                                                     return (
                                                         <ListItem key={index}>
                                                             <Typography variant="body1" component="p">
-                                                                {note.title}
+                                                                {   // @ts-ignore
+                                                                    note.title}
                                                             </Typography>
                                                         </ListItem>
                                                     )
