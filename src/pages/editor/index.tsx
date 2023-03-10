@@ -9,10 +9,11 @@ import SubScript from '@tiptap/extension-subscript';
 import {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/router';
 import {MantineProvider} from '@mantine/core';
-import {Box, Button, List, ListItem, Typography} from "@mui/material";
+import {Box, Button, List, ListItem, Typography, Skeleton } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TranscriptionComponent from "../api/Exstension";
 import { useMediaQuery } from "@mui/material";
+
 
 // @ts-ignore
 export default function Editor({ id, course, token}) {
@@ -379,8 +380,13 @@ export default function Editor({ id, course, token}) {
                             }
                                     ref={listRef}
                             >
-
-
+                                {transcriptions.length === 0 && recording && <ListItem sx={
+                                    {
+                                        width: '100%',
+                                    }
+                                }>
+                                    <Skeleton variant={'text'} width={'100%'}/>
+                                </ListItem>}
                                 {transcriptions.map((transcription, index) => {
                                     return (
                                         <ListItem key={index} sx={

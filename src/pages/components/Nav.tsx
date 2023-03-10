@@ -105,6 +105,11 @@ function ResponsiveAppBar() {
         router.push('/');
     }
 
+    const handleProfile = () => {
+        handleCloseUserMenu();
+        router.push('/profile');
+    }
+
 
     return (
         <AppBar position="absolute">
@@ -154,12 +159,14 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: 'block', md: 'none' },
+                                display: { xs: 'block', md: 'none', isLogin: 'none' },
                             }}
                         >
+                            {!isLogin && (
                                 <MenuItem  onClick={() => router.push('/app')}>
                                     <Typography textAlign="center">Dashboard</Typography>
                                 </MenuItem>
+                            )}
                         </Menu>
                     </Box>
                     <Typography
@@ -278,6 +285,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseUserMenu}
                         >
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            <MenuItem onClick={handleProfile}>Profile</MenuItem>
                         </Menu>
                     </Box>
                         )}
